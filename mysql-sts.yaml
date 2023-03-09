@@ -18,7 +18,7 @@ spec:
         image: mysql:5.7
         env:
         - name: MYSQL_ROOT_PASSWORD
-          valueFrome:
+          valueFrom:
             secretKeyRef:
               name: test
               key: password
