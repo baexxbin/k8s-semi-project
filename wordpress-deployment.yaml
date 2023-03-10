@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: myapp-deploy
+  labels:
+    apps: wordpress
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 20
+  selector:
+    matchLabels:
+      apps: wordpress
+      tier: frontend
+  replicas: 3
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        apps: wordpress
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx 
+        image: wordpress:5.9.1-php8.1-apache
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - name: myapp-volume
+          mountPath: /var/www/html/
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+        startupProbe:
+          httpGet:
+            path: /
+            port: 80
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "500m"
+      volumes:
+      - persistentVolumeClaim:
+          claimName: myapp-pvc
+        name: myapp-volume
