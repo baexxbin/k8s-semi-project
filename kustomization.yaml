@@ -1,0 +1,13 @@
+secretGenerator:
+- name: mysql-env
+  literals:
+  - password= #root 패스워드 값
+
+resources:
+  - mysql-pvc.yaml
+  - mysql-sts.yaml
+  - mysql-service.yaml
+  - mysql-svc-headless.yaml
+  - mysql-sts-read.yaml
+  - mysql-svc-read.yaml
+  - mysql-svc-read-headless.yaml
