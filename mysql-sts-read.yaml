@@ -13,7 +13,7 @@ spec:
       labels:
         app: mysql
     spec:
-      restartPolicy: OnFailure
+      restartPolicy: Always
       containers:
       - name: mysql
         image: mysql:5.7
@@ -21,7 +21,7 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: test
+              name: mysql-env
               key: password
         - name: server-id
           value: "2"
@@ -36,17 +36,16 @@ spec:
             command:
             - sh
             - -c
-            - mysql -h 127.0.0.1 -u root --password=${MYSQL_ROOT_PASSWORD} -e 'SELECT 1;'
+            - mysqladmin --version -h 127.0.0.1 -u root --password=${MYSQL_ROOT_PASSWORD}
           initialDelaySeconds: 30
           periodSeconds: 30
           timeoutSeconds: 5
         livenessProbe:
           exec:
             command:
-            - bash
-            - "-c"
-            - |
-              mysqladmin -uroot -p$MYSQL_ROOT_PASSWORD ping &> /dev/null
+            - sh
+            - -c
+            - mysqladmin --version -h 127.0.0.1 -u root --password=${MYSQL_ROOT_PASSWORD}
           initialDelaySeconds: 30
           periodSeconds: 30
           timeoutSeconds: 5
